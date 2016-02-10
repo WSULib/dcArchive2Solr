@@ -34,7 +34,7 @@ def processDocument(XMLroot):
 # index in Solr
 def indexDocument(SolrXML):
 	# print SolrXML
-	updateURL = "http://localhost/solr4/DCArchive/update/"															
+	updateURL = "http://{url}/solr4/DCArchive/update/".format(url=url)															
 	headers = {'Content-Type': 'application/xml'}
 	r = requests.post(updateURL, data=str(SolrXML), headers=headers)
 	# print r.text
@@ -46,28 +46,33 @@ def commitSolrChanges():
 		data = {'commit':'true'}
 		r = requests.post(baseurl,data=data)		
 
+# Initial check that there's an IP or FQDN
+if len(sys.argv) <= 1:
+	print "You need to pass an IP or FQDN (i.e. server.domain.edu) for this script to work. \nExample: python dcArchive2Solr.py 127.0.0.1"
+else:
+	url = print sys.argv[1]
 
-# iterate through documents
-count = 1
-ehand = open('errors.txt','wa')
-for root, subFolders, files in os.walk("input"):	
-	for filename in files:		
-		if filename == "metadata.xml":
-			filePath = os.path.join(root, filename)
-			try:
-				# run functions
-				XMLroot = loadDocument(filePath)
-				SolrXML = processDocument(XMLroot)
-				indexDocument(SolrXML)						
-			except:
-				ehand.write("Could not index: {filePath}".format(filePath=filePath))
-			
-			# show counter
-			print count
-			count += 1
-			# raw_input("enter to continue...")
-
-# commit.
-commitSolrChanges()
+	# iterate through documents
+	count = 1
+	ehand = open('errors.txt','wa')
+	for root, subFolders, files in os.walk("input"):	
+		for filename in files:		
+			if filename == "metadata.xml":
+				filePath = os.path.join(root, filename)
+				try:
+					# run functions
+					XMLroot = loadDocument(filePath)
+					SolrXML = processDocument(XMLroot)
+					indexDocument(SolrXML)						
+				except:
+					ehand.write("Could not index: {filePath}".format(filePath=filePath))
+				
+				# show counter
+				print count
+				count += 1
+				# raw_input("enter to continue...")
+	
+	# commit.
+	commitSolrChanges()
 		
 
