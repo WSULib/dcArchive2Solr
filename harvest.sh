@@ -20,10 +20,10 @@ find $DCFOLDER -type f \! -regex '.*\.xml' -delete
 tar -cvf digitalcommons.tar.gz $DCFOLDER
 
 # remove input directory
-DIRECTORY='./input'
-if [ -d "$DIRECTORY" ]; then
-  rm -r $DIRECTORY
-fi
+# DIRECTORY='./input'
+# if [ -d "$DIRECTORY" ]; then
+#   rm -r $DIRECTORY
+# fi
 
 # remake input directory
 mv $DCFOLDER $DIRECTORY
